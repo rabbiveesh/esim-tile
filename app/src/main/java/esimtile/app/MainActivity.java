@@ -119,6 +119,7 @@ public class MainActivity extends Activity {
         int[] ids = result.getIntArray("ids");
         String[] names = result.getStringArray("names");
         profiles.setOnCheckedChangeListener(null);
+        profiles.clearCheck(); // RadioGroup keeps its checked id after its views are removed.
         profiles.removeAllViews();
         if (ids == null || names == null) { status.setText("Couldn't read eSIMs: " + result.getString("error")); return; }
         status.setText(ids.length == 0 ? "No downloaded eSIMs found." : "Choose the eSIM this tile controls:");

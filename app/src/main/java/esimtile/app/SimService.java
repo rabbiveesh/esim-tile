@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /** Runs as the shell user via Shizuku and exits once its work is done. */
 public class SimService extends ISim.Stub {
     private static final String SHELL = "com.android.shell";
+    private static final int PROFILE_CLASS_PROVISIONING = 1;
     private static final int SWITCH_WAIT_SECONDS = 45;
     private static final int ROAMING_REAPPLY_COUNT = 8;
     private static final long ROAMING_REAPPLY_MS = 2_000;
@@ -35,7 +36,7 @@ public class SimService extends ISim.Stub {
         try {
             Map<Integer, String> profiles = new TreeMap<>();
             for (SubscriptionInfo s : allSubscriptions()) {
-                if (s.isEmbedded()) profiles.put(s.getSubscriptionId(), String.valueOf(s.getDisplayName()));
+                if (selectable(s)) profiles.put(s.getSubscriptionId(), String.valueOf(s.getDisplayName()));
             }
             int[] ids = new int[profiles.size()];
             String[] names = new String[profiles.size()];
@@ -55,6 +56,18 @@ public class SimService extends ISim.Stub {
     }
 
     @Override public void fixRoaming(int subId) { job(() -> roamingOff(subId)); }
+
+    /** Matches what Android's SIM settings offer: no provisioning or satellite-only profiles. */
+    private static boolean selectable(SubscriptionInfo s) {
+        return s.isEmbedded()
+                && !Integer.valueOf(PROFILE_CLASS_PROVISIONING).equals(hiddenGetter(s, "getProfileClass"))
+                && !Boolean.TRUE.equals(hiddenGetter(s, "isOnlyNonTerrestrialNetwork"));
+    }
+
+    private static Object hiddenGetter(SubscriptionInfo s, String name) {
+        try { return SubscriptionInfo.class.getMethod(name).invoke(s); }
+        catch (ReflectiveOperationException e) { return null; }
+    }
 
     private interface Job { void run() throws Exception; }
 

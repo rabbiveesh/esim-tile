@@ -17,11 +17,19 @@ eSIM Tile uses [Shizuku](https://github.com/RikkaApps/Shizuku) to perform the sw
 - Android 13 or newer on a phone with eSIM support
 - Shizuku installed and running
 
+## Install
+
+Download the APK from [Releases](https://github.com/rabbiveesh/esim-tile/releases). Release builds are signed with this certificate:
+
+```text
+SHA-256: 68:3B:15:68:D1:49:D0:14:A2:98:33:F1:E7:6F:4A:1E:14:B3:2D:BD:1F:1C:A9:5A:3B:38:75:C4:9C:31:5E:DA
+```
+
 ## Setup
 
 1. Install and start Shizuku.
 2. Open eSIM Tile and allow Shizuku access.
-3. Choose an eSIM and any options you want.
+3. Choose an eSIM and any options you want. Satellite-only and provisioning profiles are hidden, matching Android's SIM settings.
 4. Tap **Add tile to Quick Settings**.
 
 Long-press the tile to return to its settings. Shizuku usually has to be started again after a reboot; until then the tile shows "Start Shizuku".
